@@ -1,5 +1,7 @@
 # Local Agent
 
+## [☕ ☕ ☕ Buy me a coffee ☕ ☕ ☕](https://buymeacoffee.com/michalmatuh)
+
 **Run tasks on your own machines from ChatGPT, using private Git.**
 
 Local Agent is a small service you install on a computer you control.
@@ -103,9 +105,3 @@ Use [STOP and recovery](docs/OPERATIONS.md) when you need to pause execution.
 - [Contributing](CONTRIBUTING.md)
 
 Local Agent **4.20.14** · [Apache-2.0](LICENSE)
-
-## Support the project
-
-If Local Agent is useful to you, you can support its development:
-
-[☕ Buy me a coffee](https://buymeacoffee.com/michalmatuh)
