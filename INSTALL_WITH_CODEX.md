@@ -11,7 +11,11 @@ Copy the installation prompt from [README](README.md). Codex must read this
 file and the selected platform guide before making installation changes.
 Install a stable tagged release and resolve it to a full immutable Git SHA.
 Do not install from an unreviewed moving branch or a source archive lacking
-verified source identity.
+verified source identity. For releases after v4.20.14, also verify the signed
+annotated tag and its pinned source SHA, including the signer's identity
+against an independently trusted key. Historical v4.20.14 has an unsigned
+tag: validate its exact SHA and checksums without claiming signed provenance.
+See [signed-release verification](docs/RELEASE_SIGNING.md).
 
 You need:
 

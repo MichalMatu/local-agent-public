@@ -75,6 +75,62 @@ class SecurityAuditTests(unittest.TestCase):
                 result = security_audit.secrets_report(root, command="gitleaks")
             self.assertEqual(result["status"], "unverified")
 
+    def test_history_requires_full_git_checkout(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            with mock.patch.object(security_audit.shutil, "which", return_value="gitleaks"):
+                result = security_audit.secrets_report(root, history=True)
+            self.assertEqual(result["status"], "unverified")
+            self.assertEqual(result["reason"], "git_history_unavailable")
+
+    def test_shallow_history_is_unverified_without_scanning(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            def git_probe(args, **_kwargs):
+                if args[-1] == "--show-toplevel":
+                    return mock.Mock(returncode=0, stdout=str(root))
+                return mock.Mock(returncode=0, stdout="true")
+            with mock.patch.object(security_audit.subprocess, "run",
+                                   side_effect=git_probe) as run:
+                result = security_audit.secrets_report(
+                    root, command="gitleaks", history=True,
+                )
+            self.assertEqual(result["status"], "unverified")
+            self.assertEqual(result["reason"], "shallow_history")
+            self.assertEqual(run.call_count, 2)
+
+    def test_history_scan_uses_all_reachable_refs_with_redaction(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            def scan(args, **kwargs):
+                if args[0] == "git":
+                    if args[-1] == "--show-toplevel":
+                        return mock.Mock(returncode=0, stdout=str(root))
+                    return mock.Mock(returncode=0, stdout="false")
+                self.assertEqual(args[0:2], ["gitleaks", "git"])
+                self.assertIn("--log-opts=--all --full-history", args)
+                self.assertIn("--redact=100", args)
+                self.assertEqual(kwargs["cwd"], root)
+                report = Path(args[args.index("--report-path") + 1])
+                report.write_text("[]", encoding="utf-8")
+                return mock.Mock(returncode=0)
+            with mock.patch.object(security_audit.subprocess, "run", side_effect=scan):
+                result = security_audit.secrets_report(
+                    root, command="gitleaks", history=True,
+                )
+            self.assertEqual(result["status"], "pass")
+            self.assertEqual(result["findings"], 0)
+
+    def test_history_mode_failure_is_not_silently_clean(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            (root / "local_agent").mkdir()
+            with mock.patch.object(security_audit.shutil, "which",
+                                   return_value="gitleaks"):
+                result = security_audit.run(root, mode="history")
+            self.assertEqual(result["status"], "unverified")
+            self.assertIn("history", result["checks"])
+
     def test_missing_repo_is_unverified(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             self.assertEqual(

@@ -126,7 +126,11 @@ def load_host_control_source(path: Path) -> HostControlSource | None:
     if payload["enabled"] is False:
         return None
     host_id = canonical_host_id(payload["host_id"])
-    repository = canonical_control_repository(payload.get("repository", CONTROL_REPOSITORY))
+    if "repository" not in payload:
+        raise ValueError("enabled host supervisor requires an explicitly selected repository")
+    repository = canonical_control_repository(payload["repository"])
+    if repository == CONTROL_REPOSITORY:
+        raise ValueError("example repository cannot be an enabled host control source")
     intake = payload.get("host_intake", {"enabled": False})
     if (not isinstance(intake, dict) or "enabled" not in intake
             or set(intake) - {"enabled", "authorization"}

@@ -16,6 +16,11 @@ python scripts/verify.py --profile quick
 python scripts/verify.py --profile full
 ```
 
+For new public releases, run the working-tree **and Git-history**
+secret scan from a complete non-shallow checkout and verify the
+[signed release tag](docs/RELEASE_SIGNING.md) against the exact source SHA.
+Do not rewrite already-published tags or upload signing keys.
+
 Run focused tests during iteration. Final runtime changes require clean-source
 and appropriate native checks; a Mac fixture is not Linux/Android acceptance.
 Keep failed, skipped and uncertain evidence explicit. Do not run hosted CI or

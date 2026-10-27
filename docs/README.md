@@ -17,6 +17,8 @@
 - [Execution standard](GOLDEN_STANDARD.md)
 - [Contributing](../CONTRIBUTING.md)
 - [Quality tooling](QUALITY_TOOLING.md)
+- [Signed releases](RELEASE_SIGNING.md)
+- [Security reporting](../SECURITY.md)
 - [Offline maintainer handoff](HANDOFF_PROTOCOL.md)
 
 [Release notes](RELEASE_NOTES_V4.20.14.md) · [changelog](CHANGELOG.md) ·
