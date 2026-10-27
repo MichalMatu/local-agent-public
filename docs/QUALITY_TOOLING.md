@@ -12,6 +12,22 @@ python scripts/verify.py --profile full
 python scripts/verify.py --profile macos-smoke
 ```
 
+Secret scanning has two independent scopes: current files and complete Git
+history. Before public release, run both from a complete non-shallow Git
+checkout with Gitleaks installed:
+
+```sh
+python scripts/quality/security_audit.py --mode all
+```
+
+The history scanner uses `gitleaks git --log-opts=--all --full-history` to
+inspect commits reachable from local refs. Fetch all intended remote branches
+and tags first; unreachable objects and refs not present locally are not
+covered. Missing Gitleaks, missing Git, or shallow history is **UNVERIFIED**,
+never a clean pass. Neither scan prints secret values or raw findings.
+See [signed releases](RELEASE_SIGNING.md) and
+[security reporting](../SECURITY.md).
+
 The quality stage checks documentation links, scoped ownership, architecture
 and module budgets plus offline handoff contracts. Quick/full also run their
 configured compile, Ruff and source tests. Reuse the existing verifier rather
