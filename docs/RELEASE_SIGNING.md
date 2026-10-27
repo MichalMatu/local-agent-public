@@ -21,7 +21,7 @@ a trusted machine, using the maintainer's own GPG or SSH signing key.
    ```sh
    SOURCE_SHA="$(git rev-parse HEAD)"
    git tag -s vNEXT_VERSION "$SOURCE_SHA" -m "Local Agent NEXT_VERSION"
-   python scripts/release/verify_signed_tag.py \\
+   python scripts/release/verify_signed_tag.py \
      --tag vNEXT_VERSION --expected-sha "$SOURCE_SHA"
    ```
 
