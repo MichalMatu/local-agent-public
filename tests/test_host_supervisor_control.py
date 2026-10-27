@@ -42,6 +42,7 @@ class HostControlSourceTests(unittest.TestCase):
             "host_id": "macbook-one",
             "identity_file": str(self.identity),
             "control_checkout": str(self.checkout),
+            "repository": "customer/local-agent-inbox",
         }
         payload.update(replace)
         self.config.write_text(json.dumps(payload), encoding="utf-8")
@@ -64,6 +65,21 @@ class HostControlSourceTests(unittest.TestCase):
         self.assertEqual(source.ack_directory, ".agent/hosts/macbook-one/supervisor/b0e94f93-478f-4fc6-abed-159d3702362f/acks")
         self.assertEqual(source.status_path, ".agent/hosts/macbook-one/supervisor/b0e94f93-478f-4fc6-abed-159d3702362f/status.json")
         self.assertNotIn(".agent/daemon/control.json", source.request_path)
+
+    def test_enabled_control_requires_explicit_nonexample_repository(self) -> None:
+        self.write(repository="customer/local-agent-inbox")
+        payload = json.loads(self.config.read_text(encoding="utf-8"))
+        payload.pop("repository")
+        self.config.write_text(json.dumps(payload), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "explicitly selected repository"):
+            load_host_control_source(self.config)
+        self.write(repository="example-owner/local-agent")
+        with self.assertRaisesRegex(ValueError, "example repository"):
+            load_host_control_source(self.config)
+        self.write(repository="customer/local-agent-inbox")
+        source = load_host_control_source(self.config)
+        assert source is not None
+        self.assertEqual(source.repository, "customer/local-agent-inbox")
 
     def test_mismatched_host_identity_fails_closed(self) -> None:
         self.write(host_id="other-host")
