@@ -13,7 +13,7 @@ import re
 import subprocess
 from pathlib import Path
 
-TAG = re.compile(r"^v[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$")
+TAG = re.compile(r"^v[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
 
 
