@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "name": "release-candidate",
+  "version": 1,
+  "description": "Freeze the candidate, run full verification, build/package, smoke test, assemble release evidence, then stop at an explicit release gate.",
+  "required_phases": [
+    "source_freeze",
+    "full_verification",
+    "build_package",
+    "smoke",
+    "release_evidence",
+    "release_gate"
+  ],
+  "requirements": {
+    "final_full_verification": true
+  }
+}

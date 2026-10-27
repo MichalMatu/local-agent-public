@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "enabled": true,
+  "host_id": "REPLACE-WITH-YOUR-HOST-ID",
+  "installation_id": "REPLACE-WITH-A-NEW-UUID",
+  "repository": "git@github.com:YOUR-ACCOUNT/YOUR-PRIVATE-INBOX.git",
+  "branch": "agent-control",
+  "ssh_command": "ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -i /ABSOLUTE/PRIVATE/GIT-KEY",
+  "host_intake": {"enabled": true, "authorization": "github_writers"}
+}

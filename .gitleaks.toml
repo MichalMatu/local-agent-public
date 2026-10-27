@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated Python bytecode; source files remain scanned"
+paths = ['''(^|/)__pycache__/[^/]+\.pyc$''']

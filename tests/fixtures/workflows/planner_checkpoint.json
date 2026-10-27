@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "planner-checkpoint",
+  "created_at": "2026-09-19T12:04:00Z",
+  "nodes": [
+    {
+      "id": "audit",
+      "kind": "task",
+      "repository_id": "repo-a",
+      "agent_binding": "00000000-0000-4000-8000-000000000041",
+      "depends_on": [],
+      "task": {
+        "work_branch": "main",
+        "allow_write": false,
+        "resources": [],
+        "commands": ["true"]
+      }
+    },
+    {
+      "id": "review",
+      "kind": "planner_checkpoint",
+      "depends_on": ["audit"]
+    }
+  ]
+}

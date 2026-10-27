@@ -1,0 +1,10 @@
+# Pinned direct dependencies for Linux x86_64, CPython 3.13 sandbox tests.
+# These are *not* production daemon requirements.
+# The packer resolves transitive dependencies to hashed wheels offline.
+mcp==2.2.0
+httpx2==2.13.1
+ruff==0.12.11
+pytest==8.4.2
+pytest-cov==7.0.0
+coverage==7.10.7
+hypothesis==6.140.2

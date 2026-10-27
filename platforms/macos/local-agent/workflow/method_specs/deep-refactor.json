@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "name": "deep-refactor",
+  "version": 1,
+  "description": "Audit first, pause for planner review, implement incrementally, run focused and full verification, then review the final diff.",
+  "required_phases": [
+    "audit",
+    "implementation",
+    "focused_verification",
+    "full_verification",
+    "final_review"
+  ],
+  "requirements": {
+    "final_full_verification": true,
+    "planner_checkpoint_after_audit": true
+  }
+}

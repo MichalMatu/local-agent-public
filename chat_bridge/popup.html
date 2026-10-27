@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Local Agent Chat Bridge</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">↗</span><div>
+        <h1>Chat Bridge</h1><p>Local Agent <span id="version">· GitHub-first</span></p>
+      </div></div>
+      <span class="status-pill" id="connection" role="status">Checking…</span>
+    </header>
+    <div class="content-scroll">
+      <section class="panel auto-wake-panel" aria-labelledby="wakeTitle">
+        <div class="section-heading"><div>
+          <span class="eyebrow">Optional · runs in Chrome</span>
+          <h2 id="wakeTitle">Auto Wake</h2>
+        </div><span id="wakeState" class="wake-state">Off</span></div>
+        <p class="section-description">Periodically send a reminder to one ChatGPT conversation.</p>
+        <div class="wake-target" aria-live="polite"><span class="target-label">Target chat</span><span id="autoWakeTarget" class="target-value">Not selected</span></div>
+        <div class="form-grid">
+          <div class="field interval-field">
+            <label for="autoWakeInterval">Every (minutes)</label>
+            <input id="autoWakeInterval" type="number" min="2" max="1440" step="1" value="10" inputmode="numeric" />
+          </div>
+          <div class="field prompt-field">
+            <label for="autoWakePrompt">Wake message</label>
+            <textarea id="autoWakePrompt" maxlength="1200" rows="3" spellcheck="true"></textarea>
+          </div>
+        </div>
+        <div class="auto-wake-actions">
+          <button id="autoWakeStart" class="primary-button" type="button">Start for this chat</button>
+          <button id="autoWakeStop" class="secondary-button" type="button">Stop</button>
+        </div>
+        <p id="autoWakeStatus" class="help-status" role="status" aria-live="polite">Checking Auto Wake…</p>
+      </section>
+      <section class="panel transport-panel" aria-labelledby="transportTitle">
+        <div class="section-heading"><div><span class="eyebrow">Delegation</span>
+          <h2 id="transportTitle">Local Agent connection</h2></div></div>
+        <p class="section-description">Used for child chats and result notifications. Auto Wake works separately.</p>
+        <p id="status" class="transport-meta" role="status">Checking transport…</p>
+        <button id="connect" class="primary-button" type="button">Connect to Local Agent</button>
+        <p id="pairingCode" class="help-status" role="status" aria-live="polite"></p>
+        <button id="useParent" class="secondary-button block-button" type="button">Use this chat as delegation parent</button>
+        <p id="parentStatus" class="help-status" role="status"></p>
+        <details class="advanced-settings">
+          <summary>Advanced / diagnostics <span aria-hidden="true">⌄</span></summary>
+          <div class="advanced-body">
+            <p id="safety" class="detail-copy"></p>
+            <label for="pairingKey">Manual pairing key</label>
+            <input id="pairingKey" type="password" autocomplete="off" spellcheck="false" minlength="32" maxlength="128" placeholder="Machine-only key" />
+            <button id="pair" class="secondary-button" type="button">Save pairing key</button>
+            <p id="message" class="help-status" role="status"></p>
+            <p class="detail-copy">Pairing approval appears in a macOS dialog. The extension never stores your GitHub token.</p>
+          </div>
+        </details>
+      </section>
+    </div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

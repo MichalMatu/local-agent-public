@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "repositories": [
+    {
+      "id": "example-project",
+      "repository": "example-owner/example-project",
+      "agent_binding": "fe99a852-0486-4b3a-b09b-5d295e9355a8",
+      "legacy_workspace": true
+    },
+    {
+      "id": "example-hub",
+      "repository": "example-owner/example-hub",
+      "agent_binding": "b5aeb06c-5752-4e7d-9189-150613ccd349"
+    },
+    {
+      "id": "example-calls",
+      "repository": "example-owner/example-calls",
+      "agent_binding": "c4da8b3f-dca6-465d-bebd-b24eb186d5ad"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "agents": [
+    {
+      "id": "local-agent",
+      "repository": "example-owner/local-agent",
+      "agent_binding": "b0e94f93-478f-4fc6-abed-159d3702362f",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-project",
+      "repository": "example-owner/example-project",
+      "agent_binding": "fe99a852-0486-4b3a-b09b-5d295e9355a8",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-analytics",
+      "repository": "example-owner/example-analytics",
+      "agent_binding": "36251fd9-e294-48b1-a892-3a771ffcb1d4",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-hub",
+      "repository": "example-owner/example-hub",
+      "agent_binding": "b5aeb06c-5752-4e7d-9189-150613ccd349",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-tracker",
+      "repository": "example-owner/example-tracker",
+      "agent_binding": "5bc044bc-2509-41d5-9ee3-48e208e36f98",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-device",
+      "repository": "example-owner/example-device",
+      "agent_binding": "7f003af2-edde-4dd4-a32c-e9b038294d67",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-map",
+      "repository": "example-owner/example-map",
+      "agent_binding": "3269e86a-218f-40cb-9a3f-060c36019fac",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-calls",
+      "repository": "example-owner/example-calls",
+      "agent_binding": "c4da8b3f-dca6-465d-bebd-b24eb186d5ad",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-hardware",
+      "repository": "example-owner/example-hardware",
+      "agent_binding": "8953ae71-168d-4d62-8949-e15d34447f3b",
+      "execution_enabled": true
+    },
+    {
+      "id": "example-game",
+      "repository": "example-owner/example-game",
+      "agent_binding": "f945c397-8568-45c8-b995-48bbbb4447d6",
+      "execution_enabled": true
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "schema_version": 3,
+  "interval_minutes": 10,
+  "busy_retry_minutes": 1,
+  "bootstrap_prompt": "Continue only this conversation's active goal. This Chat Bridge conversation is transport/scheduling only and has no repository execution binding. Repository reasoning scope comes from the active goal and durable Conversation Fabric request and may span donor and target repositories without rebinding the chat. For any executable Local Agent task, resolve the actual target repository from the runtime catalog and use that target repository's exact canonical agent_binding. Repositories with execution=disabled may be inspected or reasoned about but must not receive executable .agent/tasks. Use direct GitHub edits when the exact diff and relevant CI can verify them; use Local Agent for Mac command execution, local builds/tests and devices. For GitHub-managed pacing/status use this chat's exact conversation_controls record; increment control_generation for schedule mutations. LAB schedule markers are legacy and must not be used for normal Superchat pacing. For a healthy active task, do not poll it at 30-second cadence: recheck no sooner than at least 2 minutes and normally use 5-10 minutes for multi-minute builds/tests unless exact evidence supports a nearer completion. If exact evidence proves an active task cannot succeed, cancel that exact task and await terminal evidence before replacing it. Never change the global Bridge Master through conversation desired state. Do not recap unchanged state.",
+  "wake_prompt": "[LA_WAKE] Continue this conversation's active goal using current evidence. The chat is transport-only and may reason across multiple repositories without rebinding. For executable work, resolve the actual target repository and use only that repository's exact canonical agent_binding in .agent/tasks. Inspect only the state and exact run/result needed for the next decision; do not queue duplicates or recap unchanged state. For GitHub-managed pacing/status use this chat's exact conversation_controls record and increment control_generation only for schedule mutations. LAB schedule markers are legacy and must not be used for normal Superchat pacing. For a healthy active task, do not poll it at 30-second cadence: recheck no sooner than at least 2 minutes and normally use 5-10 minutes for multi-minute builds/tests unless exact evidence supports a nearer completion. If exact evidence proves an active task cannot succeed, cancel that exact task and await terminal evidence before replacing it. Never change the global Bridge Master through conversation desired state.",
+  "conversation_controls": [],
+  "agents": [
+    {
+      "repository_id": "local-agent",
+      "repository": "example-owner/local-agent",
+      "agent_binding": "b0e94f93-478f-4fc6-abed-159d3702362f",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-project",
+      "repository": "example-owner/example-project",
+      "agent_binding": "fe99a852-0486-4b3a-b09b-5d295e9355a8",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-analytics",
+      "repository": "example-owner/example-analytics",
+      "agent_binding": "36251fd9-e294-48b1-a892-3a771ffcb1d4",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-hub",
+      "repository": "example-owner/example-hub",
+      "agent_binding": "b5aeb06c-5752-4e7d-9189-150613ccd349",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-tracker",
+      "repository": "example-owner/example-tracker",
+      "agent_binding": "5bc044bc-2509-41d5-9ee3-48e208e36f98",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-device",
+      "repository": "example-owner/example-device",
+      "agent_binding": "7f003af2-edde-4dd4-a32c-e9b038294d67",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-map",
+      "repository": "example-owner/example-map",
+      "agent_binding": "3269e86a-218f-40cb-9a3f-060c36019fac",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-calls",
+      "repository": "example-owner/example-calls",
+      "agent_binding": "c4da8b3f-dca6-465d-bebd-b24eb186d5ad",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-hardware",
+      "repository": "example-owner/example-hardware",
+      "agent_binding": "8953ae71-168d-4d62-8949-e15d34447f3b",
+      "execution_enabled": true
+    },
+    {
+      "repository_id": "example-game",
+      "repository": "example-owner/example-game",
+      "agent_binding": "f945c397-8568-45c8-b995-48bbbb4447d6",
+      "execution_enabled": true
+    }
+  ]
+}

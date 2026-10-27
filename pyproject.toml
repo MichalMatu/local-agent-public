@@ -1,0 +1,33 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = [
+  ".agent",
+  ".venv",
+  "venv",
+  "env",
+  "build",
+  "dist",
+]
+
+[tool.ruff.lint]
+# Keep the established Local Agent lint contract explicit. Broader rule families
+# are adopted deliberately after review instead of changing with Ruff defaults.
+select = ["E4", "E7", "E9", "F"]
+
+[tool.coverage.run]
+branch = true
+source = ["."]
+omit = [
+  "tests/*",
+  "host_ops_tests/*",
+  "scripts/*",
+  ".venv/*",
+  "venv/*",
+  "env/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+precision = 1

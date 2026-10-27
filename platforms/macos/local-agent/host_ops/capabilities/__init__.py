@@ -1,0 +1,1 @@
+"""Concrete host capability adapters."""

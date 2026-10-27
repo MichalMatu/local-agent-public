@@ -1,0 +1,17 @@
+#!/data/data/com.termux/files/usr/bin/sh
+set -eu
+umask 077
+agent_runit="$HOME/.local/state/local-agent/termux/runit"
+agent_service="$agent_runit/services/termux-agent"
+test -f "$agent_service/down"
+test -x "$agent_service/run"
+if ! "$PREFIX/bin/sv" status "$agent_service" >/dev/null 2>&1; then
+  setsid -f "$PREFIX/bin/flock" -n "$agent_runit/manager.lock" "$PREFIX/bin/runsvdir" "$agent_runit/services" </dev/null >/dev/null 2>&1
+fi
+agent_wait=0
+until "$PREFIX/bin/sv" status "$agent_service" >/dev/null 2>&1; do
+  agent_wait=$((agent_wait+1))
+  test "$agent_wait" -lt 36 || exit 71
+  sleep 0.25
+done
+"$PREFIX/bin/sv" up "$agent_service"

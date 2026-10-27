@@ -1,0 +1,28 @@
+# Explicitly opt-in Import Linter contracts (run only in disposable QA venv).
+# Import Linter 2.15. This is not a runtime dependency or CI installation.
+[tool.importlinter]
+root_package = "local_agent"
+exclude_type_checking_imports = true
+
+[[tool.importlinter.contracts]]
+id = "onboarding-does-not-depend-on-mutating-admin"
+name = "Read-only checkout onboarding must not depend on mutating admin"
+type = "forbidden"
+source_modules = ["local_agent.repository.onboarding"]
+forbidden_modules = ["local_agent.repository.admin"]
+allow_indirect_imports = false
+
+[[tool.importlinter.contracts]]
+id = "observers-do-not-depend-on-scheduler"
+name = "Health and backlog snapshot Core do not depend on daemon and supervisor"
+type = "forbidden"
+source_modules = [
+    "local_agent.runtime.health_snapshot",
+    "local_agent.runtime.backlog_snapshot",
+]
+forbidden_modules = [
+    "local_agent.daemon",
+    "local_agent.supervisor",
+    "local_agent.cli",
+]
+allow_indirect_imports = false

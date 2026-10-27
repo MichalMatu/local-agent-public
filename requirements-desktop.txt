@@ -1,0 +1,5 @@
+# Optional desktop operator UI only; never install in the daemon or on Pi Zero 2 W.
+# PySide6-Essentials provides QtCore, QtGui and QtWidgets (no Qt Addons).
+# 6.12.0 was verified in a disposable macOS arm64 Python venv on 2026-10-15.
+# Native Windows/Linux acceptance and distribution licensing remain separate gates.
+PySide6-Essentials==6.12.0

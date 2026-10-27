@@ -1,0 +1,21 @@
+[Unit]
+Description=Local Agent (replace with exact source SHA)
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=180
+StartLimitBurst=3
+
+[Service]
+Type=simple
+WorkingDirectory=/ABSOLUTE/SOURCE/SHA
+Environment=PYTHONPATH=/ABSOLUTE/SOURCE/SHA/platforms/linux/local-agent:/ABSOLUTE/SOURCE/SHA/platforms/linux/core
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/ABSOLUTE/PYTHON -B -m linux_agent --config /ABSOLUTE/PRIVATE/config.json --state /ABSOLUTE/PRIVATE/state serve
+UMask=0077
+KillMode=control-group
+TimeoutStopSec=40
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

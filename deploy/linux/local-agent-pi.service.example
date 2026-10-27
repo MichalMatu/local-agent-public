@@ -1,0 +1,27 @@
+[Unit]
+Description=Local Agent Pi Zero 2 W (replace with exact source SHA)
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=180
+StartLimitBurst=3
+
+[Service]
+Type=simple
+WorkingDirectory=/ABSOLUTE/SOURCE/SHA
+Environment=PYTHONPATH=/ABSOLUTE/SOURCE/SHA/platforms/raspberry-pi/local-agent:/ABSOLUTE/SOURCE/SHA/platforms/linux/local-agent:/ABSOLUTE/SOURCE/SHA/platforms/linux/core
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=LOCAL_AGENT_MEMORY_LIMIT_MB_MIN=1
+Environment=LOCAL_AGENT_MEMORY_LIMIT_MB_DEFAULT=96
+Environment=LOCAL_AGENT_MEMORY_LIMIT_MB_MAX=128
+ExecStartPre=/ABSOLUTE/PYTHON -B -m pi_agent probe
+ExecStart=/ABSOLUTE/PYTHON -B -m pi_agent --config /ABSOLUTE/PRIVATE/config.json --state /ABSOLUTE/PRIVATE/state serve
+UMask=0077
+KillMode=control-group
+TimeoutStopSec=40
+Restart=on-failure
+RestartSec=10
+MemoryMax=192M
+TasksMax=32
+
+[Install]
+WantedBy=default.target

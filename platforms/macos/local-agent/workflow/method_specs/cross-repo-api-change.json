@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "name": "cross-repo-api-change",
+  "version": 2,
+  "description": "Define the shared contract, implement repository-specific changes across multiple repositories, join all implementation evidence in integration, then review the combined result.",
+  "required_phases": [
+    "contract",
+    "implementation",
+    "integration",
+    "final_review"
+  ],
+  "requirements": {
+    "multi_repository_implementation": true,
+    "integration_joins_implementation": true,
+    "final_review_after_integration": true
+  }
+}

@@ -1,0 +1,1 @@
+"""Remote host capability adapters."""

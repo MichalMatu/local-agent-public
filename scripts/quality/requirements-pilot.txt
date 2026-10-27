@@ -1,0 +1,6 @@
+# Optional quality-only tools. Install ONLY in a disposable isolated virtualenv.
+# Direct versions pinned; transitive wheel hashes are NOT locked yet.
+# Never install into launchd B1c production or Pi runtime.
+import-linter==2.15
+ty==0.0.89
+hypothesis==6.170.0

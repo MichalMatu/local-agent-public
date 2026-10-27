@@ -1,0 +1,6 @@
+#!/data/data/com.termux/files/usr/bin/sh
+set -eu
+umask 077
+LOCAL_AGENT_BUNDLE="/ABSOLUTE/PRIVATE/VERIFIED-BUNDLE"
+export PYTHONPATH="$LOCAL_AGENT_BUNDLE"
+exec python3 -B -m termux_agent --config "$HOME/.config/local-agent/termux.json" --state "$HOME/.local/state/local-agent/termux" --poll-seconds 10 serve

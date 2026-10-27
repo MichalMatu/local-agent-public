@@ -1,0 +1,3 @@
+# Mac-only, disposable PyInstaller prototype. Not a production dependency.
+# Installer/notarization, Qt LGPL/commercial licensing and native UX gates pending.
+PyInstaller==6.22.3

@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Local Agent Chat Bridge",
+  "version": "0.9.8",
+  "description": "GitHub-first Local Agent browser transport, with restored historical editor Send.",
+  "permissions": [
+    "alarms",
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "http://127.0.0.1:8768/*"
+  ],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "action": {
+    "default_title": "Local Agent \u00b7 GitHub-first Chat Bridge",
+    "default_popup": "popup.html"
+  },
+  "minimum_chrome_version": "120"
+}
