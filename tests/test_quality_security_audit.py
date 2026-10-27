@@ -88,8 +88,8 @@ class SecurityAuditTests(unittest.TestCase):
             root = Path(tmp).resolve()
             def git_probe(args, **_kwargs):
                 if args[-1] == "--show-toplevel":
-                    return mock.Mock(returncode=0, stdout=str(root) + "\\n")
-                return mock.Mock(returncode=0, stdout="true\\n")
+                    return mock.Mock(returncode=0, stdout=str(root))
+                return mock.Mock(returncode=0, stdout="true")
             with mock.patch.object(security_audit.subprocess, "run",
                                    side_effect=git_probe) as run:
                 result = security_audit.secrets_report(
@@ -105,8 +105,8 @@ class SecurityAuditTests(unittest.TestCase):
             def scan(args, **kwargs):
                 if args[0] == "git":
                     if args[-1] == "--show-toplevel":
-                        return mock.Mock(returncode=0, stdout=str(root) + "\\n")
-                    return mock.Mock(returncode=0, stdout="false\\n")
+                        return mock.Mock(returncode=0, stdout=str(root))
+                    return mock.Mock(returncode=0, stdout="false")
                 self.assertEqual(args[0:2], ["gitleaks", "git"])
                 self.assertIn("--log-opts=--all --full-history", args)
                 self.assertIn("--redact=100", args)
