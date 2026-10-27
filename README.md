@@ -11,7 +11,7 @@ Use the tools, files and project environments already available on that machine.
 
 ## A typical task
 
-> “Run the tests for my project on my Mac and show me the failures.”
+> “In Local Agent mode, run the tests for my project on my Mac and show me the failures.”
 
 ChatGPT publishes the request to your private Git repository. The Local Agent
 on the selected Mac runs the task and publishes its result. You can read the
