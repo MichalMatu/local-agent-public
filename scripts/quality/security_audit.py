@@ -50,7 +50,29 @@ def manifest_report(root: Path) -> dict[str, object]:
     }
 
 
-def secrets_report(root: Path, *, command: str | None = None) -> dict[str, object]:
+def history_preflight(root: Path) -> str | None:
+    """Require the repository root and complete local history before scanning."""
+    for args, expected in (
+        (("rev-parse", "--show-toplevel"), str(root.resolve())),
+        (("rev-parse", "--is-shallow-repository"), "false"),
+    ):
+        try:
+            done = subprocess.run(
+                ["git", "-C", str(root), *args],
+                capture_output=True, text=True, check=False, timeout=10,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            return "git_history_unavailable"
+        if done.returncode != 0:
+            return "git_history_unavailable"
+        if done.stdout.strip() != expected:
+            return "not_repository_root" if args[-1] == "--show-toplevel" else "shallow_history"
+    return None
+
+
+def secrets_report(
+    root: Path, *, command: str | None = None, history: bool = False,
+) -> dict[str, object]:
     executable = command or shutil.which("gitleaks")
     if not executable:
         return {
@@ -59,15 +81,25 @@ def secrets_report(root: Path, *, command: str | None = None) -> dict[str, objec
             "reason": "scanner_not_installed",
             "findings": None,
         }
+    if history:
+        problem = history_preflight(root)
+        if problem is not None:
+            return {
+                "status": "unverified", "scanner": "gitleaks",
+                "reason": problem, "findings": None,
+            }
     with tempfile.TemporaryDirectory(prefix="la-gitleaks-redacted-") as tmp:
         report_path = Path(tmp) / "findings.json"
         args = [
-            executable, "dir", "--no-banner", "--no-color", "--redact=100",
+            executable, "git" if history else "dir",
+            "--no-banner", "--no-color", "--redact=100",
             "--report-format=json", "--report-path", str(report_path),
             "--max-archive-depth=0", "--max-target-megabytes=10",
             # cwd=root gives stable repository-relative fingerprints so a
             # single reviewed .gitleaksignore entry works across temp clones.
-            "--timeout=90", ".",
+            "--timeout=90",
+            *(["--log-opts=--all --full-history"] if history else []),
+            ".",
         ]
         try:
             done = subprocess.run(
@@ -124,6 +156,8 @@ def run(root: Path, *, mode: str = "all", command: str | None = None) -> dict[st
         checks["manifests"] = manifest_report(root)
     if mode in {"all", "secrets"}:
         checks["secrets"] = secrets_report(root, command=command)
+    if mode in {"all", "history"}:
+        checks["history"] = secrets_report(root, command=command, history=True)
     states = [item["status"] for item in checks.values()]
     status = "fail" if "fail" in states else (
         "unverified" if "unverified" in states else "pass"
@@ -134,7 +168,7 @@ def run(root: Path, *, mode: str = "all", command: str | None = None) -> dict[st
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
-    parser.add_argument("--mode", choices=("all", "manifests", "secrets"), default="all")
+    parser.add_argument("--mode", choices=("all", "manifests", "secrets", "history"), default="all")
     args = parser.parse_args()
     result = run(args.root.resolve(), mode=args.mode)
     print(json.dumps(result, indent=2, sort_keys=True))
