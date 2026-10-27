@@ -9,6 +9,8 @@ Use the tools, files and project environments already available on that machine.
 [Get started](INSTALL_WITH_CODEX.md) · [Examples](docs/USAGE.md) ·
 [Supported platforms](docs/SUPPORT.md) · [Documentation](docs/README.md)
 
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/michalmatu/local-agent-public?utm_source=readme&utm_medium=badge)
+
 ## A typical task
 
 > “In Local Agent mode, run the tests for my project on my Mac and show me the failures.”
@@ -36,6 +38,15 @@ own identity, task history and service. Projects are optional.
 
 The public repository distributes source code. **Your commands and results
 belong in your own private repository.**
+
+[Explore the interactive code architecture on GitDiagram](https://gitdiagram.com/michalmatu/local-agent-public).
+
+<details>
+<summary>Preview the architecture diagram</summary>
+
+[![Local Agent code architecture](docs/assets/architecture-diagram.png)](https://gitdiagram.com/michalmatu/local-agent-public)
+
+</details>
 
 ## Why Local Agent?
 
