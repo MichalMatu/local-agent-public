@@ -1,6 +1,6 @@
 # Execution standard
 
-The source release marker is `v4.20.13`. Read [release support](SUPPORT.md)
+The source release marker is `v4.20.14`. Read [release support](SUPPORT.md)
 for platform scope. A source tag does not prove installation acceptance.
 
 Exact host/installation and Git routing, one local intake choice, OS-user

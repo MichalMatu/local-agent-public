@@ -91,7 +91,7 @@ Use [STOP and recovery](docs/OPERATIONS.md) when you need to pause execution.
 - [Architecture](docs/ARCHITECTURE.md)
 - [Contributing](CONTRIBUTING.md)
 
-Local Agent **4.20.13** · [Apache-2.0](LICENSE)
+Local Agent **4.20.14** · [Apache-2.0](LICENSE)
 
 ## Support the project
 

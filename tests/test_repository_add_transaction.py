@@ -86,7 +86,7 @@ class RepositoryAddTransactionTests(unittest.TestCase):
             work_dir=self.work, control_dir=self.control,
             checkpoints_dir=self.checkpoints,
             registry_path=self.registry, catalog_path=self.catalog,
-            home=self.home, **kwargs,
+            home=self.home, state_dir=self.home, **kwargs,
         )
 
     def work_state(self) -> tuple[str, str, str, str, bytes, str]:
@@ -98,6 +98,50 @@ class RepositoryAddTransactionTests(unittest.TestCase):
             (self.work / ".git" / "index").read_bytes(),
             (self.work / "new.txt").read_text(encoding="utf-8"),
         )
+
+    def test_add_then_maintenance_exit_resumes_with_complete_ledgers(self) -> None:
+        """Exercise real Git registration and the real pre-restart ledger gate."""
+        from scripts import macos_repository_maintenance as maintenance
+
+        before = self.work_state()
+        session = self.root / "maintenance-session"
+        session.mkdir()
+        record = {"session_id": "session-" + "a" * 24, "source_sha": "a" * 40}
+        marker = self.home / maintenance.FROZEN
+        marker.write_bytes(maintenance._owned_freeze(record))
+        self.assertEqual(self.apply()["status"], "registered")
+        with mock.patch.object(maintenance, "_resume") as resume:
+            maintenance._finish(session, record, self.root, self.home, self.root / "service.plist")
+        resume.assert_called_once()
+        self.assertFalse(marker.exists())
+        self.assertEqual(json.loads((session / maintenance.JOURNAL).read_text())["state"],
+                         "accepted")
+        self.assertEqual(self.work_state(), before)
+
+    def test_ledger_preparation_failure_never_commits_registry_and_retry_is_safe(self) -> None:
+        from local_agent.repository import state_layout
+
+        before = self.work_state()
+        original = self.registry.read_bytes()
+        with mock.patch.object(state_layout.os, "rename", side_effect=OSError("ledger publish failed")):
+            with self.assertRaisesRegex(OSError, "ledger publish failed"):
+                self.apply()
+        self.assertEqual(self.registry.read_bytes(), original)
+        self.assertFalse((self.home / "repositories/demo").exists())
+        journal = self.home / "pending-repository-add/demo.json"
+        self.assertEqual(json.loads(journal.read_text())["state"], "prepared")
+        self.assertEqual(self.apply()["status"], "registered")
+        self.assertEqual(self.work_state(), before)
+
+    def test_registered_retry_does_not_recreate_missing_history(self) -> None:
+        self.apply()
+        ledger = self.home / "repositories/demo"
+        (ledger / "claims").rmdir()
+        original = self.registry.read_bytes()
+        with self.assertRaises(FileNotFoundError):
+            self.apply()
+        self.assertFalse((ledger / "claims").exists())
+        self.assertEqual(self.registry.read_bytes(), original)
 
     def test_managed_new_repo_uses_private_binding_and_initializes_control(self) -> None:
         """Real local Git remote; no packaged catalog mutation or owner checkout."""
@@ -375,19 +419,23 @@ class RepositoryAddTransactionTests(unittest.TestCase):
         # caller. Never repeat clone or mutate the owner's dirty checkout.
         original = transactional_add.os.fsync
         before = self.work_state()
-        calls = 0
+        failed = False
+        journal = self.home / "pending-repository-add" / "demo.json"
+        journal_parent = journal.parent
 
         def fail_final_directory_fsync(fd: int) -> None:
-            nonlocal calls
-            calls += 1
-            if calls == 6:
+            nonlocal failed
+            if (not failed and journal.exists()
+                    and json.loads(journal.read_text())["state"] == "committed"
+                    and os.fstat(fd).st_ino == journal_parent.stat().st_ino):
+                failed = True
                 raise OSError("simulated committed journal directory fsync failure")
             original(fd)
 
         with mock.patch.object(transactional_add.os, "fsync", side_effect=fail_final_directory_fsync):
             with self.assertRaisesRegex(OSError, "committed journal directory fsync"):
                 self.apply()
-        self.assertEqual(calls, 6)
+        self.assertTrue(failed)
         self.assertEqual(len(json.loads(self.registry.read_text())["repositories"]), 1)
         journal = self.home / "pending-repository-add" / "demo.json"
         self.assertEqual(json.loads(journal.read_text())["state"], "committed")

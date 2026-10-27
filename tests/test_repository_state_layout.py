@@ -1,12 +1,15 @@
-"""Quarantine state layout is initialized only by admitted workers."""
+"""Registration and admitted recovery preserve private repository ledgers."""
 from __future__ import annotations
 
 import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
-from local_agent.repository.state_layout import recover_claims_with_quarantine_layout
+from local_agent.repository.state_layout import (
+    prepare_repository_state, recover_claims_with_quarantine_layout,
+)
 from local_agent.runtime.backlog_snapshot import observe_local_backlog
 
 
@@ -18,6 +21,48 @@ class QuarantineLayoutTests(unittest.TestCase):
         self.parent = self.root / "repositories" / "local-agent"
         self.claims = self.parent / "claims"
         self.quarantine = self.parent / "corrupt-claims"
+
+    def test_registration_publishes_complete_private_layout_and_preserves_history(self) -> None:
+        prepare_repository_state(self.root, "local-agent", create=True)
+        for leaf in ("claims", "result-spool", "corrupt-claims"):
+            path = self.parent / leaf
+            self.assertEqual(path.stat().st_mode & 0o777, 0o700)
+            (path / "retained.json").write_text("durable")
+        prepare_repository_state(self.root, "local-agent", create=True)
+        prepare_repository_state(self.root, "local-agent", create=False)
+        for leaf in ("claims", "result-spool", "corrupt-claims"):
+            self.assertEqual((self.parent / leaf / "retained.json").read_text(), "durable")
+
+    def test_incomplete_existing_ledger_is_never_repaired(self) -> None:
+        self.recover()
+        with self.assertRaises(FileNotFoundError):
+            prepare_repository_state(self.root, "local-agent", create=True)
+        self.assertFalse(self.quarantine.exists())
+        self.assertFalse((self.parent / "result-spool").exists())
+
+    def test_linked_ledger_parent_is_refused_without_external_changes(self) -> None:
+        external = self.root / "external"
+        external.mkdir()
+        (self.root / "repositories").symlink_to(external, target_is_directory=True)
+        with self.assertRaises(OSError):
+            prepare_repository_state(self.root, "local-agent", create=True)
+        self.assertEqual(list(external.iterdir()), [])
+
+    def test_failed_preparation_never_exposes_partial_project_ledger(self) -> None:
+        with mock.patch("local_agent.repository.state_layout.os.rename",
+                        side_effect=OSError("interrupted publication")):
+            with self.assertRaisesRegex(OSError, "interrupted publication"):
+                prepare_repository_state(self.root, "local-agent", create=True)
+        self.assertFalse(self.parent.exists())
+        prepare_repository_state(self.root, "local-agent", create=True)
+        self.assertTrue(self.claims.is_dir())
+        self.assertTrue(self.quarantine.is_dir())
+
+    def test_registered_missing_ledger_is_not_initialized_on_retry(self) -> None:
+        (self.root / "repositories").mkdir()
+        with self.assertRaisesRegex(RuntimeError, "project ledger missing"):
+            prepare_repository_state(self.root, "local-agent", create=False)
+        self.assertFalse(self.parent.exists())
 
     def recover(self) -> None:
         self.claims.mkdir(parents=True, exist_ok=True)

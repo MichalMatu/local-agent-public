@@ -26,3 +26,14 @@ Linux project requests use the Linux project schema and exact host/binding;
 unsupported Mac fields such as work_branch or allow_write are rejected.
 Termux does not expose project execution. Use [host tasks](HOST_CONTROL_PLANE.md)
 when no project is required.
+
+
+## Registration ledger preparation
+
+macOS repository registration prepares durable private
+`repositories/<id>/{claims,result-spool,corrupt-claims}` state before publishing
+the registry entry. A complete empty layout is published from private staging;
+an interrupted preparation leaves the registry unchanged. Explicit retry reuses
+the matching binding, checkouts and complete state. Existing incomplete ledgers
+remain an error because missing directories may represent lost history.
+Maintenance still checks every ledger before restarting the service.

@@ -31,6 +31,7 @@ from local_agent.repository.context import (
 from local_agent.repository.history_policy import CONTROL_HISTORY_INITIAL_ROOT_MESSAGE
 from local_agent.repository.onboarding import plan_repository_add
 from local_agent.repository.snapshot_review import _checkpoint_directory
+from local_agent.repository.state_layout import prepare_repository_state
 
 
 def _git(args: list[str], *, cwd: Path | None = None, timeout: int = 300) -> str:
@@ -240,10 +241,12 @@ def apply_repository_add(
     checkpoints_dir: str | Path | None = None,
     registry_path: Path | None = None, catalog_path: Path | None = None,
     home: Path | None = None, cwd: Path | None = None,
+    state_dir: Path | None = None,
 ) -> dict[str, Any]:
     """Persist one verified binding LAST; safe retry reconciles earlier clones."""
     resolved_home = (home or Path.home()).expanduser().resolve()
     target = registry_path or default_registry_path(resolved_home)
+    installation_state = state_dir or default_registry_path(resolved_home).parent
     if not target.exists():
         raise ValueError("create an explicit version-1 registry before repo add --apply")
     with _registry_lock(target):
@@ -286,6 +289,7 @@ def apply_repository_add(
                 expected_agent_binding=cat_record.agent_binding,
                 control_dir=existing.control, catalog_path=catalog_path,
             )
+            prepare_repository_state(installation_state, existing.repository_id, create=False)
             # Registry was committed before journal completion. If the process
             # died between those durable writes, finish ONLY the matching
             # prepared intent on explicit retry (no replay of any Git/checkout).
@@ -366,6 +370,7 @@ def apply_repository_add(
             control_dir=selected.control, catalog_path=catalog_path,
         )
         selected.checkpoints.mkdir(parents=True, exist_ok=True)
+        prepare_repository_state(installation_state, selected.repository_id, create=True)
         if target.read_bytes() != baseline:
             raise RuntimeError("repository registry changed concurrently; retry after reconciliation")
         if catalog_path is not None:

@@ -320,7 +320,9 @@ class RepositoryMenuTests(unittest.TestCase):
             output = self.invoke(["2", "owner/new", "APPLY", "0"])
         self.assertIn('"status": "registered"', output)
         enroll.assert_called_once_with("new", "owner/new")
-        apply.assert_called_once_with("owner/new", registry_path=self.registry)
+        from local_agent.daemon import service as agentd
+        apply.assert_called_once_with("owner/new", registry_path=self.registry,
+                                      state_dir=agentd.STATE_DIR)
         self.assertFalse(active)
         self.assertEqual(self.registry.read_bytes(), self.saved)
 
@@ -350,8 +352,9 @@ class RepositoryMenuTests(unittest.TestCase):
             result = self.invoke(["2", "owner/new", "APPLY", "0"])
         self.assertIn("control_branch_created", result)
         self.assertEqual(apply.call_args.args, ("owner/new",))
-        self.assertEqual(apply.call_args.kwargs, {"registry_path": self.registry})
         from local_agent.daemon import service as agentd
+        self.assertEqual(apply.call_args.kwargs, {"registry_path": self.registry,
+                                                "state_dir": agentd.STATE_DIR})
         offline.assert_called_once_with(agentd.STATE_DIR)
         self.assertEqual(self.registry.read_bytes(), self.saved)
         self.assertEqual((self.owner / "dirty-file").read_text(), "never change this")

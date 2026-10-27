@@ -104,7 +104,7 @@ def _add(registry_file: Path | None) -> None:
                 ensure_local_repository_binding,
             )
             ensure_local_repository_binding(plan["repository_id"], plan["repository"])
-        result = apply_repository_add(repository, **opts)
+        result = apply_repository_add(repository, state_dir=agentd.STATE_DIR, **opts)
     print(json.dumps(result, indent=2, sort_keys=True))
     _restart_note()
 
